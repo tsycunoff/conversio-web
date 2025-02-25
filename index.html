@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversio – Сайт-визитка</title>
+  <style>
+    /* Сброс базовых стилей */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      color: #333;
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Фоновый canvas */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
+    /* Контейнер */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Шапка */
+    .site-header {
+      background-color: #0F3947;
+      padding: 10px 0;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo img {
+      max-height: 50px;
+    }
+    .site-nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+    .site-nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    .site-nav a:hover {
+      color: #3DD2B0;
+    }
+    /* Hero-секция */
+    .hero {
+      background-color: #0F3947;
+      color: #fff;
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .hero .btn {
+      background-color: #3DD2B0;
+      color: #fff;
+      padding: 15px 30px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .hero .btn:hover {
+      background-color: #34b99a;
+    }
+    /* Общие секции */
+    section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+    section h2 {
+      margin-bottom: 20px;
+      color: #0F3947;
+    }
+    section p {
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    section ul {
+      list-style: none;
+      margin: 20px auto;
+      max-width: 700px;
+      text-align: left;
+      padding-left: 20px;
+    }
+    section ul li {
+      margin-bottom: 10px;
+    }
+    /* Услуги */
+    .service-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .service-item {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      width: 250px;
+      text-align: left;
+    }
+    .service-item h3 {
+      margin-bottom: 10px;
+      color: #0F3947;
+    }
+    /* Команда */
+    .team-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .team-member {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      width: 250px;
+    }
+    .team-member img {
+      width: 100%;
+      border-radius: 50%;
+      margin-bottom: 15px;
+    }
+    .team-member h3 {
+      margin-bottom: 5px;
+      color: #0F3947;
+    }
+    .team-member p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    /* Контакты */
+    .contacts p {
+      margin-bottom: 10px;
+    }
+    .contacts a {
+      color: #0F3947;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .contact-form {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .contact-form button {
+      background-color: #3DD2B0;
+      color: #fff;
+      font-size: 1rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .contact-form button:hover {
+      background-color: #34b99a;
+    }
+    /* Футер */
+    .site-footer {
+      background-color: #0F3947;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+    }
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .site-nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .service-list, .team-list {
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Фоновый canvas -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Шапка сайта -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">
+        <!-- Замените путь к логотипу, если необходимо -->
+        <img src="images/logo.png" alt="Логотип Conversio" />
+      </div>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="#about">О проекте</a></li>
+          <li><a href="#services">Услуги</a></li>
+          <li><a href="#team">Команда</a></li>
+          <li><a href="#contacts">Контакты</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero-секция -->
+  <section class="hero">
+    <div class="container">
+      <h1>CONVERSIO</h1>
+      <p>Автоматизация продаж и поддержки клиентов с помощью AI</p>
+      <p>📌 Умные чат-боты, которые отвечают за секунды, закрывают сделки и помогают клиентам 24/7.</p>
+      <a href="#about" class="btn">Узнать больше</a>
+    </div>
+  </section>
+
+  <!-- О проекте -->
+  <section id="about" class="about">
+    <div class="container">
+      <h2>О проекте</h2>
+      <p>
+        Conversio — это инновационное решение для бизнеса, которое ускоряет работу с клиентами и повышает продажи.
+      </p>
+      <ul>
+        <li>🔹 <strong>Быстрые ответы:</strong> наш AI-бот мгновенно отвечает на вопросы клиентов в чате.</li>
+        <li>🔹 <strong>Интеграции с CRM и маркетплейсами:</strong> поддержка Авито, WhatsApp, Telegram, Instagram.</li>
+        <li>🔹 <strong>Аналитика и обучение:</strong> бот учится на ваших данных и становится умнее с каждым днем.</li>
+      </ul>
+      <p>
+        Наши решения идеально подходят для:
+      </p>
+      <ul>
+        <li>✅ Интернет-магазинов (электроника, одежда, авто-товары)</li>
+        <li>✅ Авито-продавцов с тысячами товаров</li>
+        <li>✅ Салонов красоты и сферы услуг</li>
+      </ul>
+      <p>
+        Conversio — ваш персональный менеджер по продажам, который никогда не устает.
+      </p>
+    </div>
+  </section>
+
+  <!-- Услуги -->
+  <section id="services" class="services">
+    <div class="container">
+      <h2>Услуги</h2>
+      <div class="service-list">
+        <div class="service-item">
+          <h3>AI-Чат-бот для бизнеса</h3>
+          <p>💡 Автоматическая обработка запросов 24/7</p>
+          <p>📦 Поддержка интеграций с CRM и внешними источниками данных</p>
+          <p>📈 Анализ диалогов и улучшение качества ответов</p>
+        </div>
+        <div class="service-item">
+          <h3>Чат-бот для Авито</h3>
+          <p>🛒 Автоматические ответы в чате Авито</p>
+          <p>🔍 Проверка наличия товара и уточнение характеристик</p>
+          <p>📲 Перевод клиента на звонок менеджера</p>
+        </div>
+        <div class="service-item">
+          <h3>Чат-бот для салонов красоты</h3>
+          <p>💅 Запись клиентов через WhatsApp, Telegram, Instagram</p>
+          <p>🗓️ Интеграция с YClients и другими сервисами</p>
+          <p>📊 Напоминания о записи и сбор отзывов</p>
+        </div>
+      </div>
+      <p style="margin-top: 20px;">
+        🔹 Свяжитесь с нами, чтобы настроить AI-бота под ваш бизнес.
+      </p>
+    </div>
+  </section>
+
+  <!-- Команда -->
+  <section id="team" class="team">
+    <div class="container">
+      <h2>Команда</h2>
+      <div class="team-list">
+        <div class="team-member">
+          <img src="images/team1.jpg" alt="Виктор" />
+          <h3>Виктор</h3>
+          <p>Основатель и CEO. </p>
+        </div>
+        <div class="team-member">
+          <img src="images/team2.jpg" alt="Вадим" />
+          <h3>Вадим</h3>
+          <p>CTO. Разработчик сложных AI-решений</p>
+        </div>
+        <div class="team-member">
+          <img src="images/team3.jpg" alt="Артём" />
+          <h3>Артём</h3>
+          <p>СОО</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section id="contacts" class="contacts">
+    <div class="container">
+      <h2>Контакты</h2>
+      <p>📞 Телефон: <a href="tel:+79990000000">+7 (999) 000-00-00</a></p>
+      <p>📧 Email: <a href="mailto:info@conversio.space">info@conversio.space</a></p>
+      <p>🔗 Telegram: <a href="#">@ConversioAI</a></p>
+      <p>💬 Оставьте заявку, и мы расскажем, как Conversio может помочь вашему бизнесу!</p>
+      <form class="contact-form" action="mailto:info@conversio.space" method="post" enctype="text/plain">
+        <input type="text" name="name" placeholder="Ваше имя" required />
+        <input type="email" name="email" placeholder="Ваш e-mail" required />
+        <textarea name="message" rows="5" placeholder="Ваше сообщение" required></textarea>
+        <button type="submit">Отправить</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Футер -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 Conversio. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <!-- Скрипт анимации фона -->
+  <script>
+    const NUM_PARTICLES = 30;
+    const MAX_DISTANCE = 150;
+    const RADIUS = 6;
+    const SPEED = 0.5;
+    const MOUSE_INFLUENCE_RADIUS = 20;
+    const MOUSE_FORCE = 0.02;
+
+    let canvas, ctx;
+    let particles = [];
+    let mouse = { x: null, y: null };
+
+    class Particle {
+      constructor(x, y, vx, vy) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.radius = RADIUS;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.strokeStyle = 'rgba(61, 210, 176, 0.8)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      update() {
+        if (mouse.x !== null && mouse.y !== null) {
+          let dx = mouse.x - this.x;
+          let dy = mouse.y - this.y;
+          let dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < MOUSE_INFLUENCE_RADIUS) {
+            let force = (1 - dist / MOUSE_INFLUENCE_RADIUS) * MOUSE_FORCE;
+            this.vx += dx * force;
+            this.vy += dy * force;
+          }
+        }
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+    }
+
+    function init() {
+      canvas = document.getElementById('bgCanvas');
+      ctx = canvas.getContext('2d');
+      resizeCanvas();
+      particles = [];
+      for (let i = 0; i < NUM_PARTICLES; i++) {
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let vx = (Math.random() - 0.5) * SPEED * 2;
+        let vy = (Math.random() - 0.5) * SPEED * 2;
+        particles.push(new Particle(x, y, vx, vy));
+      }
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          let dx = particles[i].x - particles[j].x;
+          let dy = particles[i].y - particles[j].y;
+          let dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < MAX_DISTANCE) {
+            let alpha = 1 - dist / MAX_DISTANCE;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(61, 210, 176, ${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+    window.onload = init;
+  </script>
+</body>
+</html>
