@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversio – AI-агент для бизнеса</title>
+  <!-- Подключаем Google Fonts и Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap&subset=cyrillic" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+		integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Встроенный CSS -->
+  <style>
+	/* Фирменные цвета */
+	:root {
+	  --color-primary: #00E0CB;   /* бирюзовый */
+	  --color-dark: #004457;      /* темно-бирюзовый */
+	  --color-lightgray: #f5f5f5; /* светло-серый */
+	}
+	/* Базовый сброс */
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+	body {
+	  font-family: 'Montserrat', sans-serif;
+	  color: #333;
+	  line-height: 1.6;
+	  scroll-behavior: smooth;
+	  padding-top: 60px; /* место для фиксированного меню */
+	}
+	/* Навигация */
+	#navbar {
+	  position: fixed;
+	  top: 20px;
+	  left: 50%;
+	  transform: translateX(-50%);
+	  background: var(--color-dark);
+	  backdrop-filter: blur(5px);
+	  padding: 10px 20px;
+	  border-radius: 40px;
+	  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+	  display: flex;
+	  align-items: center;
+	  z-index: 1000;
+	}
+	
+	#navbar .logo {
+	  font-size: 1.2em;
+	  font-weight: 700;
+	  color: #f5f5f5;
+	  margin-right: 30px;
+	}
+	
+	#navbar ul {
+	  display: flex;
+	  align-items: center;
+	  gap: 20px;
+	  list-style: none; /* убираем точки */
+	  margin: 0;
+	  padding: 0;
+	}
+	
+	#navbar ul li a {
+	  color: #f5f5f5;
+	  font-weight: 500;
+	  padding: 8px 0;
+	  display: block;
+	  text-decoration: none; /* отменяем подчёркивание по умолчанию */
+	}
+	
+	#navbar ul li a:hover {
+	  text-decoration: underline; /* подчёркивание при наведении */
+	}
+
+	/* Nav toggle (hamburger for mobile) */
+	#nav-toggle {
+	  display: none;
+	  cursor: pointer;
+	  font-size: 1.5em;
+	  color: #f5f5f5;
+	}
+	/* Responsive Nav */
+	@media(max-width: 768px) {
+	  #navbar {
+		padding: 10px 15px;
+	  }
+	  #navbar ul {
+		display: none;
+		flex-direction: column;
+		width: 100%;
+		margin-top: 10px;
+	  }
+	  #navbar.open ul {
+		display: flex;
+		background: var(--color-dark);
+		border-radius: 20px;
+		padding: 10px 0;
+	  }
+	  #navbar ul li {
+		margin: 5px 0;
+		text-align: center;
+	  }
+	  #nav-toggle {
+		display: block;
+	  }
+	  #navbar.open {
+		/* when open, allow it to expand to show menu */
+		width: 90%;
+	  }
+	  #navbar .logo {
+		margin-right: auto;
+	  }
+	}
+	/* Альтернативный фон (светло-серый) */
+	.alt-section {
+	  background-color: var(--color-lightgray);
+	  padding: 60px 20px;
+	  text-align: center;
+	}
+	/* Первый экран (Hero) */
+	.hero-section {
+	  min-height: 100vh;
+	  text-align: center;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  align-items: center;
+	}
+	.hero-content h1 {
+	  font-size: 2em;
+	  margin-bottom: 0.5em;
+	  color: var(--color-dark);
+	}
+	.hero-content p {
+	  font-size: 1.2em;
+	  margin-bottom: 1em;
+	}
+	.btn.cta-btn {
+	  display: inline-block;
+	  background-color: var(--color-primary);
+	  color: #fff;
+	  padding: 10px 20px;
+	  text-decoration: none;
+	  border-radius: 4px;
+	  font-weight: 600;
+	}
+	.btn.cta-btn:hover {
+	  background-color: #00caba;
+	}
+	/* Canvas для паттерна */
+	.pattern-canvas {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+	  z-index: 1;
+	  pointer-events: none;
+	}
+	/* Секция Услуги */
+	.services-section {
+	  padding: 60px 20px;
+	  text-align: center;
+	}
+	.services-section h2 {
+	  margin-bottom: 30px;
+	  color: var(--color-dark);
+	}
+	.service-list {
+	  display: flex;
+	  flex-wrap: wrap;
+	  gap: 20px;
+	  justify-content: center;
+	}
+	.service-item {
+	  flex: 1 1 200px;
+	  background: #fff;
+	  padding: 20px;
+	  border-radius: 8px;
+	  text-align: center;
+	  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+	}
+	.service-item .icon {
+	  font-size: 2em;
+	  color: var(--color-primary);
+	  margin-bottom: 10px;
+	}
+	.service-item h3 {
+	  color: var(--color-dark);
+	  margin-bottom: 10px;
+	}
+	.service-item p {
+	  font-size: 0.95em;
+	  color: #555;
+	}
+	/* Секция Тарифы */
+	.tariffs-section {
+	  position: relative;
+	  background-color: #fff;
+	  text-align: center;
+	  padding: 60px 20px;
+	}
+	.tariffs-content {
+	  position: relative;
+	  z-index: 2;
+	  max-width: 800px;
+	  margin: 0 auto;
+	}
+	.tariffs-content h2 {
+	  margin-bottom: 30px;
+	  color: var(--color-dark);
+	}
+	.tariff-plans {
+	  display: flex;
+	  flex-wrap: wrap;
+	  gap: 20px;
+	  justify-content: center;
+	}
+	.plan {
+	  flex: 1 1 250px;
+	  background: #fff;
+	  border: none;
+	  border-radius: 8px;
+	  padding: 20px;
+	  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+	  margin-bottom: 20px;
+	}
+	.plan h3 {
+	  color: var(--color-dark);
+	  margin-bottom: 10px;
+	}
+	.plan .description {
+	  font-size: 0.9em;
+	  margin-bottom: 10px;
+	}
+	.plan .price {
+	  font-weight: 700;
+	  color: var(--color-primary);
+	  font-size: 1.1em;
+	}
+	/* Секция Команда */
+	.team-section {
+	  padding: 60px 20px;
+	  text-align: center;
+	}
+	.team-section h2 {
+	  margin-bottom: 30px;
+	  color: var(--color-dark);
+	}
+	.team-list {
+	  display: flex;
+	  flex-wrap: wrap;
+	  gap: 40px;
+	  justify-content: center;
+	}
+	.team-member {
+	  width: 180px;
+	  text-align: center;
+	}
+	.team-member img {
+	  width: 180px;
+	  height: 180px;
+	  object-fit: cover;
+	  border-radius: 50%;
+	  margin-bottom: 15px;
+	}
+	.team-member h3 {
+	  font-size: 1.1em;
+	  margin-bottom: 5px;
+	  color: var(--color-dark);
+	}
+	.team-member p {
+	  font-size: 0.9em;
+	  color: #666;
+	}
+	/* Секция FAQ */
+	.faq-section {
+	  position: relative;
+	  background-color: #fff;
+	  padding: 60px 20px;
+	}
+	.faq-content {
+	  position: relative;
+	  z-index: 2;
+	  max-width: 800px;
+	  margin: 0 auto;
+	  text-align: left;
+	}
+	.faq-content h2 {
+	  margin-bottom: 30px;
+	  color: var(--color-dark);
+	  text-align: center;
+	}
+	.faq-item {
+	  margin-bottom: 20px;
+	}
+	.faq-item h4 {
+	  font-weight: 600;
+	  margin-bottom: 5px;
+	  color: var(--color-dark);
+	}
+	.faq-item p {
+	  color: #444;
+	}
+	/* Секция Контакты */
+	.contacts-section {
+	  padding: 60px 20px;
+	  text-align: center;
+	}
+	.contacts-section h2 {
+	  margin-bottom: 20px;
+	  color: var(--color-dark);
+	}
+	.contacts-section p {
+	  margin: 5px 0;
+	}
+	.contacts-section a {
+	  color: var(--color-dark);
+	  text-decoration: none;
+	}
+	.social-links {
+	  margin-top: 15px;
+	}
+	.social-links .social-icon {
+	  font-size: 1.5em;
+	  color: var(--color-primary);
+	  margin: 0 10px;
+	}
+	.social-links .social-icon:hover {
+	  color: var(--color-dark);
+	}
+	/* Footer */
+	footer {
+	  background-color: #222;
+	  color: #ccc;
+	  text-align: center;
+	  padding: 20px 10px;
+	}
+	footer a {
+	  color: #ccc;
+	  margin: 0 8px;
+	  text-decoration: none;
+	  font-size: 1.2em;
+	}
+	footer p {
+	  font-size: 0.9em;
+	}
+  </style>
+</head>
+<body>
+
+  <!-- Навигационное меню с логотипом -->
+  <header>
+	<nav id="navbar">
+		<a href="#hero" class="logo">Conversio</a>
+		<div id="nav-toggle"><i class="fa-solid fa-bars"></i></div>
+		<ul>
+		  <li><a href="#about">О проекте</a></li>
+		  <li><a href="#services">Услуги</a></li>
+		  <li><a href="#pricing">Тарифы</a></li>
+		  <li><a href="#team">Команда</a></li>
+		  <li><a href="#faq">FAQ</a></li>
+		  <li><a href="#contact">Контакты</a></li>
+		</ul>
+	  </nav>
+  </header>
+
+  <!-- Первый экран (Hero) с анимированным фоном -->
+  <section id="hero" class="hero-section pattern-section">
+	<canvas class="pattern-canvas"></canvas>
+	<div class="hero-content">
+	  <h1>Conversio – ваш персональный AI-агент</h1>
+	  <p>Автоматизируйте общение с клиентами 24/7 с помощью ИИ</p>
+	  <a href="#services" class="btn cta-btn">Узнать больше</a>
+	</div>
+  </section>
+
+  <!-- Секция Услуги -->
+  <section id="services" class="services-section alt-section">
+	<h2>Наши услуги</h2>
+	<div class="service-list">
+	  <div class="service-item">
+		<i class="icon fa fa-comments"></i>
+		<h3>Автоответы на отзывы</h3>
+		<p>ИИ агент отслеживает отзывы клиентов и мгновенно отвечает по заданному сценарию.</p>
+	  </div>
+	  <div class="service-item">
+		<i class="icon fa fa-calendar-check"></i>
+		<h3>Запись на приём</h3>
+		<p>Интеграция с календарем для автоматической записи клиентов в удобное время.</p>
+	  </div>
+	  <!-- Дополнительные услуги можно добавить здесь -->
+	</div>
+  </section>
+
+  <!-- Секция Тарифы -->
+  <section id="tariffs" class="tariffs-section pattern-section">
+	<canvas class="pattern-canvas"></canvas>
+	<div class="tariffs-content">
+	  <h2>Тарифы</h2>
+	  <div class="tariff-plans">
+		<div class="plan">
+		  <h3>ТП для маркетплейсов</h3>
+		  <p class="description">(автоответ на отзывы)</p>
+		  <p class="price">2000 руб/мес</p>
+		</div>
+		<div class="plan">
+		  <h3>Для салонов красоты</h3>
+		  <p class="description">1 ИИ агент, до 1000 диалогов/мес, интеграция с календарем и мессенджерами</p>
+		  <p class="price">5000 руб/мес</p>
+		</div>
+		<div class="plan">
+		  <h3>Полный функционал</h3>
+		  <p class="description">до 10&nbsp;000 диалогов/мес, интеграция с CRM, мессенджерами, соц.сетями, Авито, Циан</p>
+		  <p class="price">20&nbsp;000 руб/мес</p>
+		</div>
+	  </div>
+	</div>
+  </section>
+
+  <!-- Секция Команда -->
+  <section id="team" class="team-section alt-section">
+	<h2>Наша команда</h2>
+	<div class="team-list">
+	  <div class="team-member">
+		<img src="viktor.jpg" alt="Виктор Цыкунов">
+		<h3>Виктор Цыкунов</h3>
+		<p>CEO &amp; Founder</p>
+	  </div>
+	  <div class="team-member">
+		<img src="vadim.jpg" alt="Вадим">
+		<h3>Вадим</h3>
+		<p>CTO</p>
+	  </div>
+	  <div class="team-member">
+		<img src="artyom.jpg" alt="Артём Бурцев">
+		<h3>Артём Бурцев</h3>
+		<p>COO &amp; Co-Founder</p>
+	  </div>
+	</div>
+  </section>
+
+  <!-- Секция FAQ -->
+  <section id="faq" class="faq-section pattern-section">
+	<canvas class="pattern-canvas"></canvas>
+	<div class="faq-content">
+	  <h2>FAQ</h2>
+	  <div class="faq-item">
+		<h4>Как происходит внедрение и поддерживаются ли интеграции с мессенджерами?</h4>
+		<p>Внедрение осуществляют наши специалисты, а система поддерживает интеграции с популярными мессенджерами (WhatsApp, Telegram, Viber и др.).</p>
+	  </div>
+	  <div class="faq-item">
+		<h4>Сколько времени занимает обучение системы?</h4>
+		<p>Обучение занимает 2–5 рабочих дней в зависимости от сложности вашего кейса.</p>
+	  </div>
+	  <div class="faq-item">
+		<h4>С какими платформами и сервисами интегрируется агент?</h4>
+		<p>Conversio интегрируется с Авито, Instagram, ВКонтакте, а также с AmoCRM и Битрикс24.</p>
+	  </div>
+	  <div class="faq-item">
+		<h4>Есть ли бесплатный тестовый период?</h4>
+		<p>Бесплатного тестового периода нет, но доступна демо-зона для ознакомления с функционалом.</p>
+	  </div>
+	  <div class="faq-item">
+		<h4>Доступна ли поддержка 24/7?</h4>
+		<p>Наша служба поддержки работает 24/7 и всегда готова помочь.</p>
+	  </div>
+	</div>
+  </section>
+
+  <!-- Секция Контакты -->
+  <section id="contacts" class="contacts-section alt-section">
+	<h2>Контакты</h2>
+	<p><strong>Адрес:</strong> 1-й Красногвардейский проезд, дом 15</p>
+	<p><strong>Email:</strong> <a href="mailto:info@conversio.space">info@conversio.space</a></p>
+	<div class="social-links">
+	  <a href="https://twitter.com/Conversio" target="_blank" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+	  <a href="https://instagram.com/Conversio" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+	</div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+	<p>© 2025 Conversio. Все права защищены.</p>
+	<p>Мы в соцсетях:
+	  <a href="https://twitter.com/Conversio" target="_blank"><i class="fa-brands fa-twitter"></i></a>
+	  <a href="https://instagram.com/Conversio" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+	</p>
+  </footer>
+
+  <!-- Inline JavaScript для анимированного фона -->
+  <script>
+	document.addEventListener('DOMContentLoaded', () => {
+	  const canvasElements = document.querySelectorAll('canvas.pattern-canvas');
+	  const patterns = [];
+
+	  canvasElements.forEach(canvas => {
+		const ctx = canvas.getContext('2d');
+		const width = canvas.offsetWidth;
+		const height = canvas.offsetHeight;
+		canvas.width = width;
+		canvas.height = height;
+
+		// Создаем набор точек
+		const points = [];
+		const numPoints = Math.min(100, Math.floor((width * height) / 15000));
+		for (let i = 0; i < numPoints; i++) {
+		  points.push({
+			x: Math.random() * width,
+			y: Math.random() * height,
+			vx: (Math.random() * 2 - 1) * 0.5,
+			vy: (Math.random() * 2 - 1) * 0.5
+		  });
+		}
+		patterns.push({ canvas, ctx, width, height, points });
+	  });
+
+	  const animate = () => {
+		patterns.forEach(pat => {
+		  const { ctx, width, height, points } = pat;
+		  ctx.clearRect(0, 0, width, height);
+		  // Обновляем позиции точек
+		  for (let p of points) {
+			p.x += p.vx;
+			p.y += p.vy;
+			if (p.x <= 0 || p.x >= width) p.vx *= -1;
+			if (p.y <= 0 || p.y >= height) p.vy *= -1;
+		  }
+		  // Рисуем пустотелые круги и линии
+		  const connectDist = 120;
+		  const connectDistSq = connectDist * connectDist;
+		  for (let i = 0; i < points.length; i++) {
+			const p = points[i];
+			ctx.beginPath();
+			ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+			ctx.strokeStyle = 'rgba(0,224,203,1)';
+			ctx.lineWidth = 1;
+			ctx.stroke();
+			for (let j = i + 1; j < points.length; j++) {
+			  const q = points[j];
+			  const dx = p.x - q.x;
+			  const dy = p.y - q.y;
+			  const distSq = dx * dx + dy * dy;
+			  if (distSq <= connectDistSq) {
+				ctx.beginPath();
+				ctx.moveTo(p.x, p.y);
+				ctx.lineTo(q.x, q.y);
+				ctx.strokeStyle = 'rgba(0,224,203,0.5)';
+				ctx.lineWidth = 1;
+				ctx.stroke();
+			  }
+			}
+		  }
+		});
+		requestAnimationFrame(animate);
+	  };
+
+	  animate();
+	});
+  </script>
+</body>
+</html>
