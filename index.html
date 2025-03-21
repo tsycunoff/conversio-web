@@ -132,6 +132,16 @@
 	  justify-content: center;
 	  align-items: center;
 	}
+	.hero-logo {
+	  max-width: 12%; /* Относительный размер */
+	  height: auto;
+	  display: block;
+	  margin: 0 auto;
+	}
+	
+	.hero-logo-container {
+	  text-align: center; /* Центрируем блок */
+	}
 	.hero-content h1 {
 	  font-size: 2em;
 	  margin-bottom: 0.5em;
@@ -372,10 +382,12 @@
   </header>
 
   <!-- Первый экран (Hero) с анимированным фоном -->
-  <section id="hero" class="hero-section pattern-section">
+<section id="hero" class="hero-section pattern-section">
 	<canvas class="pattern-canvas"></canvas>
+	<div class="hero-logo-container">
+		<img src="/images/logo.png" alt="Логотип Conversio" class="hero-logo" />
+	</div>
 	<div class="hero-content">
-	  <img src="images/logo.png" alt="Логотип Conversio" class="hero-logo" />
 	  <h1>Conversio – ваш персональный AI-агент</h1>
 	  <p>Автоматизируйте общение с клиентами 24/7 с помощью ИИ</p>
 	  <a href="#services" class="btn cta-btn">Узнать больше</a>
@@ -395,6 +407,26 @@
 		<i class="icon fa fa-calendar-check"></i>
 		<h3>Запись на приём</h3>
 		<p>Интеграция с календарем для автоматической записи клиентов в удобное время.</p>
+	  </div>
+	  <div class="service-item">
+		<i class="icon fa-solid fa-comments"></i>
+		<h3>Онлайн чат-бот 24/7</h3>
+		<p>Автоматически отвечает на вопросы клиентов на сайте в режиме реального времени, круглосуточно.</p>
+	  </div>
+	  <div class="service-item">
+		<i class="icon fa-solid fa-robot"></i>
+		<h3>Искусственный интеллект</h3>
+		<p>Обучается на базе ваших материалов и данных, чтобы давать точные ответы и вести диалог как живой менеджер.</p>
+	  </div>
+	  <div class="service-item">
+		<i class="icon fa-solid fa-chart-line"></i>
+		<h3>Аналитика и отчёты</h3>
+		<p>Предоставляет подробную статистику по диалогам, конверсии и интересам клиентов для улучшения вашего бизнеса.</p>
+	  </div>
+	  <div class="service-item">
+		<i class="icon fa-solid fa-gears"></i>
+		<h3>Интеграция</h3>
+		<p>Легко интегрируется с вашим сайтом, CRM и мессенджерами (Telegram, WhatsApp и др.) для максимальной эффективности.</p>
 	  </div>
 	  <!-- Дополнительные услуги можно добавить здесь -->
 	</div>
@@ -430,17 +462,17 @@
 	<h2>Наша команда</h2>
 	<div class="team-list">
 	  <div class="team-member">
-		<img src="viktor.jpg" alt="Виктор Цыкунов">
+		<img src="/images/team1.jpg" alt="Виктор Цыкунов">
 		<h3>Виктор Цыкунов</h3>
 		<p>CEO &amp; Founder</p>
 	  </div>
 	  <div class="team-member">
-		<img src="vadim.jpg" alt="Вадим">
-		<h3>Вадим</h3>
-		<p>CTO</p>
+		<img src="/images/team2.jpg" alt="Вадим">
+		<h3>Вадим Матвеев</h3>
+		<p>CTO &amp; Co-Founder</p>
 	  </div>
 	  <div class="team-member">
-		<img src="artyom.jpg" alt="Артём Бурцев">
+		<img src="/images/team3.jpg" alt="Артём Бурцев">
 		<h3>Артём Бурцев</h3>
 		<p>COO &amp; Co-Founder</p>
 	  </div>
