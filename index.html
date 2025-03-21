@@ -28,6 +28,11 @@
 	  scroll-behavior: smooth;
 	  padding-top: 60px; /* место для фиксированного меню */
 	}
+	}
+	/* Плавная прокрутка при навигации по якорям */
+	html {
+	  scroll-behavior: smooth;
+	}
 	/* Навигация */
 	#navbar {
 	  position: fixed;
@@ -49,13 +54,14 @@
 	  font-weight: 700;
 	  color: #f5f5f5;
 	  margin-right: 30px;
+	  text-decoration: none;
 	}
 	
 	#navbar ul {
 	  display: flex;
 	  align-items: center;
 	  gap: 20px;
-	  list-style: none; /* убираем точки */
+	  list-style: none; 
 	  margin: 0;
 	  padding: 0;
 	}
@@ -369,6 +375,7 @@
   <section id="hero" class="hero-section pattern-section">
 	<canvas class="pattern-canvas"></canvas>
 	<div class="hero-content">
+		<img src="logo.png" alt="Логотип Conversio" class="hero-logo" />
 	  <h1>Conversio – ваш персональный AI-агент</h1>
 	  <p>Автоматизируйте общение с клиентами 24/7 с помощью ИИ</p>
 	  <a href="#services" class="btn cta-btn">Узнать больше</a>
